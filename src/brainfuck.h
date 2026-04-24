@@ -125,6 +125,8 @@ void interpret_brainfuck(unsigned char *content) {
         }
         ch++;
     }
+    vector_destroy(pointer(stack));
+    vector_destroy(pointer(memory));
 }
 
 int brainfuck_find_errors(stack_t content) {
@@ -175,6 +177,7 @@ int brainfuck_find_errors(stack_t content) {
         fprintf(stderr, "Missing ']' for closing, at pos: %d by '%c'\n",  (int)(ch-content+1), *ch);
         error_quantity++;
     }
+    vector_destroy(pointer(stack));
     return error_quantity;
 }
 
