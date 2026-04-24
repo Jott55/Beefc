@@ -2,7 +2,12 @@
 #define FIND_ERRORS_BEFORE_EXECUTING 1
 
 #include "brainfuck.h"
+#include "vector.h"
 
+vector_create(
+    Vectori, 
+    int
+);
 
 int main() {
     brainfuck_run_from_file("./brainfuck.bf");

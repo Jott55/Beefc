@@ -5,7 +5,7 @@ TARGET:=$(BUILD_DIR)/main
 
 CC := clang
 CXX := clang++
-CFLAGS := -Wall -g -O0
+CFLAGS := -Wall -g -O0 
 
 SRCS := $(shell cd $(SRC_DIR) && find . -name "*.cpp" -o -name "*.c")
 DEPS := $(shell find . -name "*.h")

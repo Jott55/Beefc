@@ -1,7 +1,6 @@
 #ifndef BRAINFUCK_HEADER
 #define BRAINFUCK_HEADER
 
-#include "stack.h"
 #include "vector.h"
 #include "file_io.h"
 #include "unistd.h"
@@ -15,6 +14,21 @@
 #endif
 
 // brainfuck.h
+typedef unsigned char vector_t;
+typedef unsigned char* stack_t;
+
+
+vector_create(
+    Vector,
+    vector_t
+); 
+
+vector_create (
+    Stack,
+    stack_t
+);
+
+
 
 void brainfuck_right(Vector *mem, int *mp) {
     (*mp)++;
@@ -43,16 +57,16 @@ void brainfuck_left_bracket(Vector *mem, int *mp, Stack *stack, stack_t *ch) {
         return;
     }
 
-    stack_add(stack, *ch);
+    vector_add(stack, *ch);
 }
 
 void brainfuck_right_bracket(Vector *mem, int *mp, Stack *stack, stack_t *ch) { 
     assert(stack->size > 0);
     if (*vector_at(mem, *mp) == 0) {
-        stack_pop(stack);
+        vector_remove_last(stack);
         return;
     }
-    *ch = stack_peek(stack); 
+    *ch = vector_peek(stack); 
 }
 
 void brainfuck_input(Vector *mem, int *mp) {
@@ -75,9 +89,9 @@ void interpret_brainfuck(unsigned char *content) {
     stack_t ch = content;
     Vector memory = vector_new();
     int mp = 0;
-    Stack stack = stack_new();
+    Stack stack = vector_new();
     
-    vector_resize(&memory, 2);
+    vector_resize(pointer(memory), 2);
     
     while (*ch != '\0') {
         switch (*ch)
@@ -116,7 +130,7 @@ void interpret_brainfuck(unsigned char *content) {
 int brainfuck_find_errors(stack_t content) {
     stack_t ch = content;
     int mp = 0;
-    Stack stack = stack_new();
+    Stack stack = vector_new();
     int lines = 1;
     stack_t line_start = ch;
     int error_quantity = 0;
@@ -136,7 +150,7 @@ int brainfuck_find_errors(stack_t content) {
             }
             break;
         case '[':
-            stack_add(&stack, ch);
+            vector_add(pointer(stack), ch);
             break;
         case ']':
             if (stack.size <= 0) {
@@ -144,7 +158,7 @@ int brainfuck_find_errors(stack_t content) {
                 error_quantity++;
                 break;
             }
-            stack_pop(&stack);
+            vector_remove_last(pointer(stack));
             break;
         case '\n':
             lines++;
@@ -156,7 +170,8 @@ int brainfuck_find_errors(stack_t content) {
         ch++;
     }
     while (stack.size > 0) {
-        ch = stack_pop(&stack);
+        ch = vector_peek(pointer(stack));
+        vector_remove_last(pointer(stack));
         fprintf(stderr, "Missing ']' for closing, at pos: %d by '%c'\n",  (int)(ch-content+1), *ch);
         error_quantity++;
     }
