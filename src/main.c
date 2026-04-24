@@ -5,6 +5,6 @@
 
 
 int main() {
-    brainfuck_run_from_file("../brainfuck.bf");
+    brainfuck_run_from_file("./brainfuck.bf");
     return 0;
 }

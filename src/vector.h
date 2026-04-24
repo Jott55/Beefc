@@ -40,17 +40,21 @@ void vector_destroy(Vector *vector) {
     vector->size = 0;
 }
 
-void vector_resize(Vector *vector, size_t size) {
-    if (size > vector->capacity) { 
-        vector->capacity = size * 2;
-        vector->start = (vector_t *)realloc(vector->start, vector->capacity * sizeof(vector_t));
-        assert((size-vector->size >=0)); 
-        memset(vector->start+vector->size, 0, sizeof(vector_t)*(size-vector->size));
-    } else if (vector->size < size) {
-        assert((size-vector->size >=0)); 
-        memset(vector->start+vector->size, 0, sizeof(vector_t)*(size-vector->size));
+
+
+void vector_resize(Vector *vector, size_t new_size) {
+    if (new_size > vector->capacity) { 
+        vector->capacity = new_size * 2;  
+        vector->start = (vector_t *)realloc(vector->start, vector->capacity * sizeof(vector->start));
+        assert((new_size-vector->size > 0));
+        // v {s: 2, c: 2} (4) -> v {s: 2, c: 4}
+        // go to end, 0, new capacity
+        memset(vector->start+vector->size, 0, sizeof(vector_t)*(vector->capacity));
     }
-    vector->size = size;
+    for (int i = vector->size; i < vector->capacity; i++) {
+        assert(((vector->start+i) == 0) && "Not zero initialized");
+    }
+    vector->size = new_size;
 }
 
 void vector_add(Vector *vector, vector_t value) {
